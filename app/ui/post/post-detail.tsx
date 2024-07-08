@@ -1,23 +1,49 @@
 import React from 'react';
 import Container from '@/app/ui/container';
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import { FaThumbsUp, FaEye } from 'react-icons/fa';
 
-export default function PostDetail() {
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+  tags: string[];
+  reactions: number;
+  likes: number;
+  views: number;
+}
+
+interface PostDetailProps {
+  post: Post;
+}
+
+const PostDetail: React.FC<PostDetailProps> = ({ post }) => {
   return (
     <section className="flex w-3/4 my-16">
       <Container>
         <div className="leading-loose space-y-4">
           <h1 className="text-4xl font-bold tracking-tight leading-normal">
-            His mother had always taught him
+            {post.title}
           </h1>
+          <div className="flex items-center space-x-4 text-gray-600 mt-2">
+            <div className="flex items-center space-x-1">
+              <FaThumbsUp />
+              <span>{post.reactions.likes}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <FaEye />
+              <span>{post.views}</span>
+            </div>
+          </div>
           <p className="w-1/2">
-            His mother had always taught him not to ever think of himself as better than others. He tried to live by this motto. He never looked down on those who were less fortunate or who had less money than him. But the stupidity of the group of people he was talking to made him change his mind.
+            {post.body}
           </p>
           <div className="mx-auto space-x-2">
-            <Badge variant="secondary">history</Badge>
-            <Badge variant="secondary">american</Badge>
-            <Badge variant="secondary">crime</Badge>
+            {post.tags.map((tag) => (
+              <Badge key={tag} variant="secondary">{tag}</Badge>
+            ))}
           </div>
         </div>
         <div className="mt-16">
@@ -46,6 +72,8 @@ export default function PostDetail() {
           Load More
         </Button>
       </Container>
-    </section >
+    </section>
   );
-}
+};
+
+export default PostDetail;

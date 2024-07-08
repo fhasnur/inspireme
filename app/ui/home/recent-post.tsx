@@ -11,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import Link from 'next/link';
 
 interface Post {
   id: number;
@@ -74,9 +75,9 @@ export default function RecentPost() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {currentPosts.map((post) => (
               <div key={post.id} className="leading-normal space-y-4">
-                <a href="#" className="text-2xl font-bold tracking-tight leading-normal hover:border-b-2 hover:border-gray-400">
+                <Link href={`/post/${post.id}`} className="text-2xl font-bold tracking-tight leading-normal hover:border-b-2 hover:border-gray-400" passHref>
                   {post.title}
-                </a>
+                </Link>
                 <p className="line-clamp-2">
                   {post.body}
                 </p>
