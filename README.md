@@ -1,10 +1,10 @@
 # inspireme
 
-**inspireme** project is a web for displaying posts. The application allows users to view the latest posts, open each post's details, and see related comments. Additionally, the app provides pagination for navigating between post pages.
+**inspireme** is a web for displaying posts. The application allows users to view the latest posts, open each post's details, and see related comments. Additionally, the app provides pagination for navigating between post pages.
 
 ## Live Demo
 
-Check out the web version of **inspireme** here: [inspireme](https://inspireme-eight.vercel.app/)
+Check out the web version of **inspireme** here: [inspireme](https://inspireme-web.vercel.app/)
 
 ## How to Run Locally
 1. **Install pnpm**:
