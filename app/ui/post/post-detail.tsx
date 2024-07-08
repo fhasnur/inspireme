@@ -10,8 +10,9 @@ interface Post {
   body: string;
   userId: number;
   tags: string[];
-  reactions: number;
-  likes: number;
+  reactions: {
+    likes: number;
+  };
   views: number;
 }
 

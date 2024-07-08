@@ -12,7 +12,10 @@ interface Post {
   body: string;
   userId: number;
   tags: string[];
-  reactions: number;
+  reactions: {
+    likes: number;
+  };
+  views: number;
 }
 
 const PostPage: React.FC = () => {
