@@ -1,17 +1,69 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Container from '@/app/ui/container';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+  tags: string[];
+  reactions: number;
+}
+
+const POSTS_PER_PAGE = 6;
 
 export default function RecentPost() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('https://dummyjson.com/posts');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setPosts(data.posts);
+      } catch (err) {
+        setError('Failed to fetch posts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const indexOfLastPost = currentPage * POSTS_PER_PAGE;
+  const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) return <p>{error}</p>;
+
   return (
     <section className="bg-slate-50 p-16">
       <Container>
@@ -20,97 +72,56 @@ export default function RecentPost() {
             Recent Post
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="leading-normal space-y-4">
-              <a href="#" className="text-2xl font-bold tracking-tight leading-normal hover:border-b-2 hover:border-gray-400">
-                His mother had always taught him
-              </a>
-              <p className="line-clamp-2">
-                His mother had always taught him not to ever think of himself as better than others...
-              </p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary">history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
+            {currentPosts.map((post) => (
+              <div key={post.id} className="leading-normal space-y-4">
+                <a href="#" className="text-2xl font-bold tracking-tight leading-normal hover:border-b-2 hover:border-gray-400">
+                  {post.title}
+                </a>
+                <p className="line-clamp-2">
+                  {post.body}
+                </p>
+                <div className="flex space-x-2">
+                  {post.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary">{tag}</Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="leading-normal space-y-4">
-              <h1 className="text-2xl font-bold tracking-tight leading-normal">
-                A great way to start the day
-              </h1>
-              <p className="line-clamp-2">His mother had always taught him not to ever think of himself as better than others. He  tried to live by this motto. He never looked down on those who were less fortunate or who had less money than him. But the stupidity of the group of people he was talking to made him change his mind.</p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary">history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
-              </div>
-            </div>
-            <div className="leading-normal space-y-4">
-              <h1 className="text-2xl font-bold tracking-tight leading-normal">
-                The beauty of nature
-              </h1>
-              <p className="line-clamp-2">Walking through the forest, you can see all sorts of wildlife and plants...</p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary">history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
-              </div>
-            </div>
-            <div className="leading-normal space-y-4">
-              <h1 className="text-2xl font-bold tracking-tight leading-normal">
-                The joy of reading
-              </h1>
-              <p className="line-clamp-2">Books can transport you to different worlds and introduce you to new ideas...</p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary" >history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
-              </div>
-            </div>
-            <div className="leading-normal space-y-4">
-              <h1 className="text-2xl font-bold tracking-tight leading-normal">
-                Cooking at home
-              </h1>
-              <p className="line-clamp-2">Making your own meals at home can be a fun and rewarding experience...</p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary">history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
-              </div>
-            </div>
-            <div className="leading-normal space-y-4">
-              <h1 className="text-2xl font-bold tracking-tight leading-normal">
-                Exercise for a healthy life
-              </h1>
-              <p className="line-clamp-2">Regular exercise can help improve your physical and mental health...</p>
-              <div className="flex space-x-2">
-                <Badge variant="secondary">history</Badge>
-                <Badge variant="secondary">american</Badge>
-                <Badge variant="secondary">crime</Badge>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
         <Pagination className="mt-10">
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage > 1) paginate(currentPage - 1);
+                }}
+              />
             </PaginationItem>
+            {Array.from({ length: Math.ceil(posts.length / POSTS_PER_PAGE) }, (_, i) => (
+              <PaginationItem key={i + 1}>
+                <PaginationLink
+                  href="#"
+                  isActive={i + 1 === currentPage}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    paginate(i + 1);
+                  }}
+                >
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
             <PaginationItem>
-              <PaginationLink href="#" isActive>1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage < Math.ceil(posts.length / POSTS_PER_PAGE)) paginate(currentPage + 1);
+                }}
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
