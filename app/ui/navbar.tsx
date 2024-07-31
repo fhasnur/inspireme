@@ -11,8 +11,8 @@ export default function Navbar() {
             inspire.me
           </Link>
           <div className="space-x-8 text-base">
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
           </div>
         </div>
       </Container>
