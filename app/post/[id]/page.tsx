@@ -18,8 +18,17 @@ interface Post {
   views: number;
 }
 
+interface Comments {
+  id: number;
+  body: string;
+  user: {
+    fullName: string;
+  }
+}
+
 const PostPage: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<Comments[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +51,21 @@ const PostPage: React.FC = () => {
         }
       };
 
+      const fetchComment = async () => {
+        try {
+          const response = await fetch(`https://dummyjson.com/comments/post/${id}`);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          setComments(data.comments);
+        } catch (err) {
+          setError('Failed to fetch comments');
+        }
+      }
+
       fetchPost();
+      fetchComment();
     }
   }, [id]);
 
@@ -61,7 +84,7 @@ const PostPage: React.FC = () => {
   return (
     <>
       <Navbar />
-      {post && <PostDetail post={post} />}
+      {post && <PostDetail post={post} comments={comments || []} />}
       <Footer />
     </>
   );

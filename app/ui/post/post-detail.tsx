@@ -16,11 +16,20 @@ interface Post {
   views: number;
 }
 
-interface PostDetailProps {
-  post: Post;
+interface Comments {
+  id: number;
+  body: string;
+  user: {
+    fullName: string;
+  }
 }
 
-const PostDetail: React.FC<PostDetailProps> = ({ post }) => {
+interface PostDetailProps {
+  post: Post;
+  comments: Comments[];
+}
+
+const PostDetail: React.FC<PostDetailProps> = ({ post, comments }) => {
   return (
     <section className="flex w-3/4 my-16">
       <Container>
@@ -52,26 +61,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ post }) => {
             Comments
           </h4>
           <div className="space-y-4 mt-5 mb-5">
-            <div>
-              <p className="text-sm font-semibold">User 1</p>
-              <p className="text-sm">This is a comment from user 1.</p>
-            </div>
-            <div>
-              <p className="text-sm font-semibold">User 2</p>
-              <p className="text-sm">This is a comment from user 2.</p>
-            </div>
-            <div>
-              <p className="text-sm font-semibold">User 3</p>
-              <p className="text-sm">This is a comment from user 3.</p>
-            </div>
+            {comments.map((comment) => (
+              <div key={comment.id}>
+                <p className="text-sm font-semibold">{comment.user.fullName}</p>
+                <p className="text-sm">{comment.body}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <Button
-          className="text-xs"
-          variant="outline"
-        >
-          Load More
-        </Button>
       </Container>
     </section>
   );
