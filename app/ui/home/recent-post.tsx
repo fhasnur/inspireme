@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Container from '@/app/ui/container';
 import { Badge } from '@/components/ui/badge';
+import { SkeletonPost } from '@/app/ui/home/skeleton-post';
 import {
   Pagination,
   PaginationContent,
@@ -57,9 +58,20 @@ export default function RecentPost() {
 
   if (loading) {
     return (
-      <div className="flex justify-center h-screen">
-        <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
+      <section className="bg-slate-50 p-16">
+        <Container>
+          <div className="mx-auto border-1">
+            <p className="text-lg mb-10 font-semibold tracking-tight leading-normal">
+              Recent Post
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {Array.from({ length: POSTS_PER_PAGE }).map((_, index) => (
+                <SkeletonPost key={index} />
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
     );
   }
 

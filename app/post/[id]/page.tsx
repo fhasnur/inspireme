@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Navbar from '@/app/ui/navbar';
 import Footer from '@/app/ui/footer';
 import PostDetail from '@/app/ui/post/post-detail';
+import SkeletonPostDetail from '@/app/ui/post/skeleton-detail';
 
 interface Post {
   id: number;
@@ -69,14 +70,6 @@ const PostPage: React.FC = () => {
     }
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  }
-
   if (error) <p>{error}</p>;
 
   if (!post) <p>No post found</p>;
@@ -84,7 +77,7 @@ const PostPage: React.FC = () => {
   return (
     <>
       <Navbar />
-      {post && <PostDetail post={post} comments={comments || []} />}
+      {loading ? <SkeletonPostDetail /> : post && <PostDetail post={post} comments={comments || []} />}
       <Footer />
     </>
   );
